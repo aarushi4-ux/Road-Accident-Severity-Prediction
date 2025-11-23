@@ -1,0 +1,7 @@
+{
+  "balanced_accuracy": 0.8256022643706595,
+  "macro_f1": 0.7949946139016942,
+  "weighted_f1": 0.8325148100217503,
+  "train_samples": 593236,
+  "test_samples": 148310
+}

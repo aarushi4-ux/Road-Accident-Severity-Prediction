@@ -1,0 +1,176 @@
+{
+  "TRAFFIC_CONTROL_DEVICE": [
+    "NO CONTROLS",
+    "TRAFFIC SIGNAL",
+    "STOP SIGN/FLASHER",
+    "UNKNOWN",
+    "OTHER"
+  ],
+  "DEVICE_CONDITION": [
+    "NO CONTROLS",
+    "UNKNOWN",
+    "FUNCTIONING PROPERLY",
+    "OTHER",
+    "NOT FUNCTIONING",
+    "FUNCTIONING IMPROPERLY"
+  ],
+  "WEATHER_CONDITION": [
+    "CLEAR",
+    "RAIN",
+    "UNKNOWN",
+    "CLOUDY",
+    "SNOW",
+    "FOG",
+    "OTHER",
+    "SEVERE CROSS WIND",
+    "HAIL",
+    "BLOWING SNOW",
+    "SANDSTORM"
+  ],
+  "LIGHTING_CONDITION": [
+    "DAYLIGHT",
+    "DARKNESS, LIGHTED ROAD",
+    "UNKNOWN",
+    "DARKNESS",
+    "DAWN",
+    "DUSK"
+  ],
+  "FIRST_CRASH_TYPE": [
+    "TURNING",
+    "REAR END",
+    "OTHER OBJECT",
+    "SIDESWIPE SAME DIRECTION",
+    "ANGLE",
+    "PARKED MOTOR VEHICLE",
+    "SIDESWIPE OPPOSITE DIRECTION",
+    "FIXED OBJECT",
+    "PEDALCYCLIST",
+    "REAR TO FRONT",
+    "PEDESTRIAN",
+    "HEAD ON",
+    "REAR TO SIDE",
+    "OTHER NONCOLLISION",
+    "REAR TO REAR",
+    "ANIMAL",
+    "OVERTURNED",
+    "TRAIN"
+  ],
+  "TRAFFICWAY_TYPE": [
+    "NOT DIVIDED",
+    "INTERSECTION",
+    "DIVIDED",
+    "PARKING LOT",
+    "ONE-WAY",
+    "FOUR WAY",
+    "UNKNOWN",
+    "ALLEY",
+    "CENTER TURN LANE",
+    "OTHER",
+    "RAMP",
+    "FIVE POINT, OR MORE",
+    "TRAFFIC ROUTE",
+    "ROUNDABOUT",
+    "DRIVEWAY"
+  ],
+  "ALIGNMENT": [
+    "STRAIGHT",
+    "CURVE"
+  ],
+  "ROADWAY_SURFACE_COND": [
+    "UNKNOWN",
+    "DRY",
+    "WET",
+    "ICE",
+    "OTHER",
+    "SNOW",
+    "SAND/MUD/DIRT"
+  ],
+  "ROAD_DEFECT": [
+    "NO DEFECTS",
+    "DEFECT",
+    "UNKNOWN"
+  ],
+  "REPORT_TYPE": [
+    "NOT ON SCENE (DESK REPORT)",
+    "ON SCENE",
+    "UNKNOWN",
+    "AMENDED"
+  ],
+  "INTERSECTION_RELATED_I": [
+    "UNKNOWN",
+    "Y",
+    "N"
+  ],
+  "DAMAGE": [
+    "OVER $1,500",
+    "$501 - $1,500",
+    "$500 OR LESS"
+  ],
+  "PRIM_CONTRIBUTORY_CAUSE": [
+    "BAD DRIVING SKILLS",
+    "NOT APPLICABLE",
+    "UNABLE TO DETERMINE",
+    "DISREGARDING TRAFFIC RULES",
+    "OVERSPEEDING",
+    "WEATHER",
+    "DRINKING",
+    "VEHICLE CONDITION",
+    "DISTRACTION",
+    "OBSTRUCTION",
+    "PHYSICAL CONDITION OF DRIVER",
+    "RELATED TO BUS STOP",
+    "ROAD DEFECTS",
+    "EVASIVE ACTION",
+    "PASSING STOPPED SCHOOL BUS",
+    "TEXTING",
+    "BICYCLE/MOTORCYCLE ON RED"
+  ],
+  "SEC_CONTRIBUTORY_CAUSE": [
+    "UNABLE TO DETERMINE",
+    "NOT APPLICABLE",
+    "BAD DRIVING SKILLS",
+    "OVERSPEEDING",
+    "DISREGARDING TRAFFIC RULES",
+    "WEATHER",
+    "VEHICLE CONDITION",
+    "DISTRACTION",
+    "OBSTRUCTION",
+    "DRINKING",
+    "RELATED TO BUS STOP",
+    "ROAD DEFECTS",
+    "PHYSICAL CONDITION OF DRIVER",
+    "EVASIVE ACTION",
+    "TEXTING",
+    "BICYCLE/MOTORCYCLE ON RED",
+    "PASSING STOPPED SCHOOL BUS"
+  ],
+  "CRASH_TIME_OF_DAY": [
+    "Morning",
+    "Afternoon",
+    "Evening",
+    "Night"
+  ],
+  "CRASH_DAY_OF_WEEK": {
+    "1": "Monday",
+    "2": "Tuesday",
+    "3": "Wednesday",
+    "4": "Thursday",
+    "5": "Friday",
+    "6": "Saturday",
+    "7": "Sunday"
+  },
+  "CRASH_MONTH": {
+    "1": "January",
+    "2": "February",
+    "3": "March",
+    "4": "April",
+    "5": "May",
+    "6": "June",
+    "7": "July",
+    "8": "August",
+    "9": "September",
+    "10": "October",
+    "11": "November",
+    "12": "December"
+  }
+}
