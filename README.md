@@ -123,8 +123,4 @@ This project was developed as part of a Foundations of Data Science group projec
 | **Aarushi** | [@sanya28wd](#) | Model explainability (SHAP/LIME), documentation |
 | **Chirudeva** | [@github_id_3](#) | Geospatial analysis, hotspot detection, risk scoring |
 
-<div align="center">
-  <p><strong>⚠️ Disclaimer:</strong> This project is for educational and research purposes only. Predictions should not be used as the sole basis for safety-critical decisions.</p>
-  
-  <p>Made with ❤️ by the FDS Team</p>
-</div>
+
