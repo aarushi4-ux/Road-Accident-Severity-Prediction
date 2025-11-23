@@ -1,4 +1,4 @@
-# Road Accident Severity Prediction – Group Project
+# Road Accident Severity Prediction 
 
 This repository contains our end-to-end **Road Accident Severity Prediction** project built as part of the Foundations of Data Science coursework. The goal of this project is to build a reliable machine learning pipeline that predicts the severity of a traffic crash and identifies high-risk areas using geospatial intelligence.
 
