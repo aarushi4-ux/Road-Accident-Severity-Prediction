@@ -16,9 +16,6 @@ from pathlib import Path
 # ============================================================================
 # PAGE CONFIG
 # ============================================================================
-import os
-st.write("Current working directory:", os.getcwd())
-st.write("Contents:", os.listdir())
 
 st.set_page_config(
     page_title="🚗 Crash Severity Predictor",
