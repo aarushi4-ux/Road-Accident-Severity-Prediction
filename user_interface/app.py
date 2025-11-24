@@ -262,7 +262,7 @@ def main():
         st.markdown("## Navigation")
         page = st.radio(
             "Go to",
-            ["🔮 Predict", "📈 Risk Analysis", "ℹ️ About"],
+            [" Predict", " Risk Analysis", " About"],
             label_visibility="collapsed"
         )
         
@@ -280,14 +280,14 @@ def main():
             st.markdown(f"{icon} **{cls}**")
     
     # ==================== PAGE: PREDICT ====================
-    if page == "🔮 Predict":
-        st.markdown("## 🔮 Predict Crash Outcome")
+    if page == " Predict":
+        st.markdown("## Predict Crash Outcome")
         st.markdown("Enter crash conditions to predict if it will result in injury.")
         
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            st.markdown("### 🕐 Time & Location")
+            st.markdown("###  Time & Location")
             
             crash_hour = st.slider("Hour (0-23)", 0, 23, 14)
             
@@ -305,7 +305,7 @@ def main():
             crash_time_val = time_options.index(crash_time)
         
         with col2:
-            st.markdown("### 🌤️ Conditions")
+            st.markdown("###  Conditions")
             
             weather_options = FEATURE_MAPPINGS['WEATHER_CONDITION']
             weather = st.selectbox("Weather", weather_options)
@@ -324,7 +324,7 @@ def main():
             defect_val = defect_options.index(road_defect)
         
         with col3:
-            st.markdown("### 🚗 Road & Traffic")
+            st.markdown("###  Road & Traffic")
             
             speed_limit = st.slider("Speed Limit", 0, 70, 30, step=5)
             
@@ -427,7 +427,7 @@ def main():
             is_injury = "INJURY" in predicted_class.upper() or "TOW" in predicted_class.upper()
             card_class = "result-danger" if is_injury else "result-safe"
             color = "#e94560" if is_injury else "#4caf50"
-            icon = "⚠️" if is_injury else "✅"
+            icon = "" if is_injury else ""
             
             st.markdown(f"""
                 <div class="result-card {card_class}">
@@ -477,28 +477,28 @@ def main():
         
                 risk_factors = []
                 if speed_limit >= 40:
-                    risk_factors.append("🔴 High speed zone (≥40 mph)")
+                    risk_factors.append(" High speed zone (≥40 mph)")
                 if weather != 'CLEAR':
-                    risk_factors.append(f"🔴 Adverse weather: {weather}")
+                    risk_factors.append(f"Adverse weather: {weather}")
                 if 'DARKNESS' in lighting:
-                    risk_factors.append("🟡 Low visibility (darkness)")
+                    risk_factors.append("Low visibility (darkness)")
                 if surface not in ['DRY', 'UNKNOWN']:
-                    risk_factors.append(f"🔴 Poor surface: {surface}")
+                    risk_factors.append(f" Poor surface: {surface}")
                 if prim_cause in ['DRINKING', 'OVERSPEEDING', 'DISTRACTION', 'TEXTING']:
-                    risk_factors.append(f"🔴 Dangerous behavior: {prim_cause}")
+                    risk_factors.append(f" Dangerous behavior: {prim_cause}")
                 if num_units >= 3:
-                    risk_factors.append(f"🟡 Multiple vehicles ({num_units})")
+                    risk_factors.append(f" Multiple vehicles ({num_units})")
                 if crash_hour >= 22 or crash_hour <= 5:
-                    risk_factors.append("🟡 Late night hours")
+                    risk_factors.append(" Late night hours")
                 
                 if risk_factors:
                     for rf in risk_factors:
                         st.markdown(f"• {rf}")
                 else:
-                    st.success("✅ No major risk factors identified")
+                    st.success(" No major risk factors identified")
     
     # ==================== PAGE: RISK ANALYSIS ====================
-    elif page == "📈 Risk Analysis":
+    elif page == " Risk Analysis":
         st.markdown("## Risk Factor Analysis")
         
         col1, col2 = st.columns(2)
@@ -528,7 +528,7 @@ def main():
             """)
         
         st.markdown("---")
-        st.markdown("### 📊 Key Statistics")
+        st.markdown("### Key Statistics")
         
         col_s1, col_s2, col_s3, col_s4 = st.columns(4)
         with col_s1:
@@ -541,19 +541,19 @@ def main():
             st.metric("Distraction", "25%", "involve phone use")
     
     # ==================== PAGE: ABOUT ====================
-    elif page == "ℹ️ About":
-        st.markdown("## ℹ️ About This App")
+    elif page == " About":
+        st.markdown("##  About This App")
         
         st.markdown(f"""
-        ### 🎯 Purpose
+        ###  Purpose
         Predict whether a traffic crash will result in **injury** or be a **non-injury incident**.
         
-        ### 🤖 Model: LightBGM
+        ### Model: LightBGM
         - Full sklearn Pipeline with preprocessing
         - Handles missing values and feature scaling
         - Binary classification with probability estimates
         
-        ### 📊 Performance
+        ###  Performance
         """)
         
         col1, col2 = st.columns(2)
@@ -562,10 +562,7 @@ def main():
         with col2:
             st.metric("Macro F1-Score", f"{metrics.get('test_macro_f1', 0.79)*100:.1f}%")
         
-        st.markdown("""
-        ### ⚠️ Disclaimer
-        This tool is for **educational purposes only**. Do not use for safety-critical decisions.
-        
+        st.markdown("""  
         ### 🛠️ Tech Stack
         - **ML**: scikit-learn Pipeline + LightGBM
         - **UI**: Streamlit + Plotly
