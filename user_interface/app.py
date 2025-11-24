@@ -480,7 +480,7 @@ def main():
                     yaxis=dict(gridcolor='#333')
                 )
                 st.plotly_chart(fig, use_container_width=True)
-            '''
+            
             with col_r2:
                 st.markdown("### 💡 Risk Factors Identified")
         
@@ -504,7 +504,7 @@ def main():
                     for rf in risk_factors:
                         st.markdown(f"• {rf}")
                 else:
-                    st.success("✅ No major risk factors identified")'''
+                    st.success("✅ No major risk factors identified")
     
     # ==================== PAGE: RISK ANALYSIS ====================
     elif page == "📈 Risk Analysis":
