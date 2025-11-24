@@ -208,8 +208,8 @@ def load_model():
             model_path = p
             break
     
-    if model_path is None:
-        raise FileNotFoundError("Could not find best_pipeline.joblib")
+    #if model_path is None:
+        #raise FileNotFoundError("Could not find best_pipeline.joblib")
     
     # Load pipeline model
     pipeline = joblib.load(model_path / "lightgbm_model.joblib")
