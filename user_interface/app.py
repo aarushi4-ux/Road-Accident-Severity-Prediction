@@ -192,48 +192,39 @@ FEATURE_MAPPINGS = {
 
 @st.cache_resource
 def load_model():
-    """Load existing model files from the models folder"""
-    
-    # Try different possible paths for model files
-    possible_paths = [
-        Path("models"),           # models/
-        Path("model"),            # model/
-        Path("."),                # current directory
-        Path("../models"),        # parent/models
-    ]
-    
-    model_path = None
-    for p in possible_paths:
-        if (p / "lightgbm_model.joblib").exists():
-            model_path = p
-            break
-    
-    #if model_path is None:
-        #raise FileNotFoundError("Could not find best_pipeline.joblib")
-    
-    # Load pipeline model
-    pipeline = joblib.load(model_path / "lightgbm_model.joblib")
-    
-    # Load label encoder
-    label_encoder = joblib.load(model_path / "label_encoder.joblib")
-    
-    # Try to load metrics if available
-    metrics_path = model_path.parent / "reports" / "metrics.json"
+    """Load model and encoder inside user_interface/model/"""
+
+    model_path = Path("model")
+
+    # Required files
+    model_file = model_path / "lightgbm_model.joblib"
+    encoder_file = model_path / "label_encoder.joblib"
+
+    # Validate both files exist
+    if not model_file.exists() or not encoder_file.exists():
+        raise FileNotFoundError(
+            f"Model files not found in {model_path.resolve()}\n"
+            f"Expected:\n - {model_file}\n - {encoder_file}"
+        )
+
+    # Load model + encoder
+    pipeline = joblib.load(model_file)
+    label_encoder = joblib.load(encoder_file)
+
+    # Load metrics if present
+    metrics_path = model_path / "metrics.json"   # keep inside model/
     if metrics_path.exists():
-        with open(metrics_path, 'r') as f:
+        with open(metrics_path, "r") as f:
             metrics = json.load(f)
     else:
-        # Default metrics if file not found
         metrics = {
             "best_model": "LightGBM",
             "test_balanced_accuracy": 0.82,
-            "test_macro_f1": 0.79
+            "test_macro_f1": 0.79,
         }
-    
-    # Try to load feature importance if available
-    feat_path = model_path.parent / "reports" / f"feature_importance_{metrics.get('best_model', 'ExtraTrees')}.png"
-    
+
     return pipeline, label_encoder, metrics
+
 
 
 # ============================================================================
