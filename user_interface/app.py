@@ -259,7 +259,7 @@ def main():
     
     # ==================== SIDEBAR ====================
     with st.sidebar:
-        st.markdown("## 🎛️ Navigation")
+        st.markdown("## Navigation")
         page = st.radio(
             "Go to",
             ["🔮 Predict", "📈 Risk Analysis", "ℹ️ About"],
@@ -289,55 +289,55 @@ def main():
         with col1:
             st.markdown("### 🕐 Time & Location")
             
-            crash_hour = st.slider("🕐 Hour (0-23)", 0, 23, 14)
+            crash_hour = st.slider("Hour (0-23)", 0, 23, 14)
             
             day_options = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-            crash_day = st.selectbox("📅 Day of Week", day_options, index=3)
+            crash_day = st.selectbox("Day of Week", day_options, index=3)
             crash_day_val = day_options.index(crash_day) + 1
             
             month_options = ['January', 'February', 'March', 'April', 'May', 'June',
                            'July', 'August', 'September', 'October', 'November', 'December']
-            crash_month = st.selectbox("📆 Month", month_options, index=6)
+            crash_month = st.selectbox(" Month", month_options, index=6)
             crash_month_val = month_options.index(crash_month) + 1
             
             time_options = FEATURE_MAPPINGS['CRASH_TIME_OF_DAY']
-            crash_time = st.selectbox("🌅 Time of Day", time_options)
+            crash_time = st.selectbox("Time of Day", time_options)
             crash_time_val = time_options.index(crash_time)
         
         with col2:
             st.markdown("### 🌤️ Conditions")
             
             weather_options = FEATURE_MAPPINGS['WEATHER_CONDITION']
-            weather = st.selectbox("🌧️ Weather", weather_options)
+            weather = st.selectbox("Weather", weather_options)
             weather_val = weather_options.index(weather)
             
             lighting_options = FEATURE_MAPPINGS['LIGHTING_CONDITION']
-            lighting = st.selectbox("💡 Lighting", lighting_options)
+            lighting = st.selectbox("Lighting", lighting_options)
             lighting_val = lighting_options.index(lighting)
             
             surface_options = FEATURE_MAPPINGS['ROADWAY_SURFACE_COND']
-            surface = st.selectbox("🛣️ Road Surface", surface_options, index=1)
+            surface = st.selectbox("Road Surface", surface_options, index=1)
             surface_val = surface_options.index(surface)
             
             defect_options = FEATURE_MAPPINGS['ROAD_DEFECT']
-            road_defect = st.selectbox("⚠️ Road Defect", defect_options)
+            road_defect = st.selectbox(" Road Defect", defect_options)
             defect_val = defect_options.index(road_defect)
         
         with col3:
             st.markdown("### 🚗 Road & Traffic")
             
-            speed_limit = st.slider("🚦 Speed Limit", 0, 70, 30, step=5)
+            speed_limit = st.slider("Speed Limit", 0, 70, 30, step=5)
             
             trafficway_options = FEATURE_MAPPINGS['TRAFFICWAY_TYPE']
-            trafficway = st.selectbox("🛤️ Trafficway Type", trafficway_options)
+            trafficway = st.selectbox("Trafficway Type", trafficway_options)
             trafficway_val = trafficway_options.index(trafficway)
             
             alignment_options = FEATURE_MAPPINGS['ALIGNMENT']
-            alignment = st.selectbox("↔️ Alignment", alignment_options)
+            alignment = st.selectbox("Alignment", alignment_options)
             alignment_val = alignment_options.index(alignment)
             
             control_options = FEATURE_MAPPINGS['TRAFFIC_CONTROL_DEVICE']
-            traffic_control = st.selectbox("🚥 Traffic Control", control_options)
+            traffic_control = st.selectbox(" Traffic Control", control_options)
             control_val = control_options.index(traffic_control)
         
         # Additional details
@@ -346,41 +346,41 @@ def main():
             
             with col4:
                 device_options = FEATURE_MAPPINGS['DEVICE_CONDITION']
-                device_cond = st.selectbox("📟 Device Condition", device_options, index=2)
+                device_cond = st.selectbox(" Device Condition", device_options, index=2)
                 device_val = device_options.index(device_cond)
                 
                 crash_type_options = FEATURE_MAPPINGS['FIRST_CRASH_TYPE']
-                first_crash = st.selectbox("💥 First Crash Type", crash_type_options, index=1)
+                first_crash = st.selectbox(" First Crash Type", crash_type_options, index=1)
                 crash_type_val = crash_type_options.index(first_crash)
             
             with col5:
                 intersection_options = FEATURE_MAPPINGS['INTERSECTION_RELATED_I']
-                intersection = st.selectbox("🔀 Intersection Related", intersection_options, index=2)
+                intersection = st.selectbox("Intersection Related", intersection_options, index=2)
                 intersection_val = intersection_options.index(intersection)
                 
                 damage_options = FEATURE_MAPPINGS['DAMAGE']
-                damage = st.selectbox("💰 Damage", damage_options)
+                damage = st.selectbox(" Damage", damage_options)
                 damage_val = damage_options.index(damage)
             
             with col6:
                 prim_cause_options = FEATURE_MAPPINGS['PRIM_CONTRIBUTORY_CAUSE']
-                prim_cause = st.selectbox("🎯 Primary Cause", prim_cause_options, index=1)
+                prim_cause = st.selectbox("Primary Cause", prim_cause_options, index=1)
                 prim_cause_val = prim_cause_options.index(prim_cause)
                 
                 sec_cause_options = FEATURE_MAPPINGS['SEC_CONTRIBUTORY_CAUSE']
-                sec_cause = st.selectbox("🎯 Secondary Cause", sec_cause_options, index=1)
+                sec_cause = st.selectbox(" Secondary Cause", sec_cause_options, index=1)
                 sec_cause_val = sec_cause_options.index(sec_cause)
             
-            num_units = st.slider("🚙 Number of Vehicles", 1, 10, 2)
+            num_units = st.slider(" Number of Vehicles", 1, 10, 2)
             
             report_options = FEATURE_MAPPINGS['REPORT_TYPE']
-            report_type = st.selectbox("📝 Report Type", report_options, index=1)
+            report_type = st.selectbox(" Report Type", report_options, index=1)
             report_val = report_options.index(report_type)
         
         # ==================== PREDICT BUTTON ====================
         st.markdown("---")
         
-        if st.button("🔮 PREDICT CRASH OUTCOME", use_container_width=True):
+        if st.button(" PREDICT CRASH OUTCOME", use_container_width=True):
             
             # Build input DataFrame matching the feature order from training
             input_dict = {
@@ -445,7 +445,7 @@ def main():
             col_r1, col_r2 = st.columns(2)
             
             with col_r1:
-                st.markdown("### 📊 Probability Breakdown")
+                st.markdown("### Probability Breakdown")
                 prob_df = pd.DataFrame({
                     'Outcome': classes,
                     'Probability': probabilities * 100
@@ -473,7 +473,7 @@ def main():
                 st.plotly_chart(fig, use_container_width=True)
             
             with col_r2:
-                st.markdown("### 💡 Risk Factors Identified")
+                st.markdown("###  Risk Factors Identified")
         
                 risk_factors = []
                 if speed_limit >= 40:
@@ -499,7 +499,7 @@ def main():
     
     # ==================== PAGE: RISK ANALYSIS ====================
     elif page == "📈 Risk Analysis":
-        st.markdown("## 📈 Risk Factor Analysis")
+        st.markdown("## Risk Factor Analysis")
         
         col1, col2 = st.columns(2)
         
@@ -558,9 +558,9 @@ def main():
         
         col1, col2 = st.columns(2)
         with col1:
-            st.metric("Balanced Accuracy", f"{metrics.get('test_balanced_accuracy', 0.75)*100:.1f}%")
+            st.metric("Balanced Accuracy", f"{metrics.get('test_balanced_accuracy', 0.82)*100:.1f}%")
         with col2:
-            st.metric("Macro F1-Score", f"{metrics.get('test_macro_f1', 0.72)*100:.1f}%")
+            st.metric("Macro F1-Score", f"{metrics.get('test_macro_f1', 0.79)*100:.1f}%")
         
         st.markdown("""
         ### ⚠️ Disclaimer
