@@ -1,8 +1,3 @@
-"""
-🚗 Crash Severity Prediction - Streamlit App
-Uses EXISTING model files (best_pipeline.joblib + label_encoder.joblib)
-No retraining needed!
-"""
 
 import streamlit as st
 import pandas as pd
@@ -13,21 +8,14 @@ import joblib
 import json
 from pathlib import Path
 
-# ============================================================================
-# PAGE CONFIG
-# ============================================================================
 
 st.set_page_config(
-    page_title="🚗 Crash Severity Predictor",
-    page_icon="🚗",
+    page_title=" Crash Severity Predictor",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# ============================================================================
-# CUSTOM CSS - DARK THEME
-# ============================================================================
-
+# CSS Theme
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
@@ -147,9 +135,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ============================================================================
-# FEATURE MAPPINGS (for UI dropdowns)
-# ============================================================================
+# Feature Mappings
 
 FEATURE_MAPPINGS = {
     'TRAFFIC_CONTROL_DEVICE': ['NO CONTROLS', 'TRAFFIC SIGNAL', 'STOP SIGN/FLASHER', 'UNKNOWN', 'OTHER'],
@@ -185,51 +171,53 @@ FEATURE_MAPPINGS = {
     'CRASH_TIME_OF_DAY': ['Morning', 'Afternoon', 'Evening', 'Night'],
 }
 
-
-# ============================================================================
-# LOAD EXISTING MODEL FILES
-# ============================================================================
+# Loading model files
 
 @st.cache_resource
 def load_model():
-    """Load model and encoder inside user_interface/model/"""
-
-    model_path = Path("user_interface/model")
-
-    # Required files
-    model_file = model_path / "lightgbm_model.joblib"
-    encoder_file = model_path / "label_encoder.joblib"
-
-    # Validate both files exist
-    if not model_file.exists() or not encoder_file.exists():
-        raise FileNotFoundError(
-            f"Model files not found in {model_path.resolve()}\n"
-            f"Expected:\n - {model_file}\n - {encoder_file}"
-        )
-
-    # Load model + encoder
-    pipeline = joblib.load(model_file)
-    label_encoder = joblib.load(encoder_file)
-
-    # Load metrics if present
-    metrics_path = model_path / "metrics.json"   # keep inside model/
+    """Load existing model files from the models folder"""
+    
+    # Try different possible paths for model files
+    possible_paths = [
+        Path("UI/models"),           # models/
+        Path("UI/model"),            # model/
+        Path("."),                # current directory
+        Path("../models"),        # parent/models
+    ]
+    
+    model_path = None
+    for p in possible_paths:
+        if (p / "lightgbm_model.joblib").exists():
+            model_path = p
+            break
+    
+    if model_path is None:
+        raise FileNotFoundError("Could not find best_pipeline.joblib")
+    
+    # Load pipeline model
+    pipeline = joblib.load(model_path / "lightgbm_model.joblib")
+    
+    # Load label encoder
+    label_encoder = joblib.load(model_path / "label_encoder.joblib")
+    
+    metrics_path = model_path.parent / "reports" / "metrics.json"
     if metrics_path.exists():
-        with open(metrics_path, "r") as f:
+        with open(metrics_path, 'r') as f:
             metrics = json.load(f)
     else:
+
         metrics = {
             "best_model": "LightGBM",
             "test_balanced_accuracy": 0.82,
-            "test_macro_f1": 0.79,
+            "test_macro_f1": 0.79
         }
-
+    
+    feat_path = model_path.parent / "reports" / f"feature_importance_{metrics.get('best_model', 'ExtraTrees')}.png"
+    
     return pipeline, label_encoder, metrics
 
 
 
-# ============================================================================
-# MAIN APP
-# ============================================================================
 
 def main():
     # Load model
@@ -237,7 +225,8 @@ def main():
         pipeline, label_encoder, metrics = load_model()
         classes = label_encoder.classes_
     except Exception as e:
-        st.error(f"⚠️ Error loading model: {e}")
+        st.error(f"Error loading model: {e}")
+    '''
         st.info("""
         👉 Please ensure these files exist:
         - `models/best_pipeline.joblib`
@@ -245,9 +234,8 @@ def main():
         
         These should have been created by running the modelling script.
         """)
-        return
+        return'''
     
-    # ==================== HEADER ====================
     st.markdown("""
         <div style="text-align: center; padding: 20px 0 30px 0;">
             <h1 style="font-size: 2.8rem; margin-bottom: 5px;">🚗 Crash Severity Predictor</h1>
@@ -257,12 +245,12 @@ def main():
         </div>
     """, unsafe_allow_html=True)
     
-    # ==================== SIDEBAR ====================
+    #Sidebar navigation
     with st.sidebar:
         st.markdown("## Navigation")
         page = st.radio(
             "Go to",
-            [" Predict", " Risk Analysis", " About"],
+            [" Predict", " Risk Analysis", "About"],
             label_visibility="collapsed"
         )
         
@@ -287,12 +275,12 @@ def main():
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            st.markdown("###  Time & Location")
+            st.markdown("### Time & Location")
             
             crash_hour = st.slider("Hour (0-23)", 0, 23, 14)
             
             day_options = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-            crash_day = st.selectbox("Day of Week", day_options, index=3)
+            crash_day = st.selectbox(" Day of Week", day_options, index=3)
             crash_day_val = day_options.index(crash_day) + 1
             
             month_options = ['January', 'February', 'March', 'April', 'May', 'June',
@@ -305,18 +293,18 @@ def main():
             crash_time_val = time_options.index(crash_time)
         
         with col2:
-            st.markdown("###  Conditions")
+            st.markdown("### Conditions")
             
             weather_options = FEATURE_MAPPINGS['WEATHER_CONDITION']
-            weather = st.selectbox("Weather", weather_options)
+            weather = st.selectbox(" Weather", weather_options)
             weather_val = weather_options.index(weather)
             
             lighting_options = FEATURE_MAPPINGS['LIGHTING_CONDITION']
-            lighting = st.selectbox("Lighting", lighting_options)
+            lighting = st.selectbox(" Lighting", lighting_options)
             lighting_val = lighting_options.index(lighting)
             
             surface_options = FEATURE_MAPPINGS['ROADWAY_SURFACE_COND']
-            surface = st.selectbox("Road Surface", surface_options, index=1)
+            surface = st.selectbox(" Road Surface", surface_options, index=1)
             surface_val = surface_options.index(surface)
             
             defect_options = FEATURE_MAPPINGS['ROAD_DEFECT']
@@ -324,16 +312,16 @@ def main():
             defect_val = defect_options.index(road_defect)
         
         with col3:
-            st.markdown("###  Road & Traffic")
+            st.markdown("### Road & Traffic")
             
-            speed_limit = st.slider("Speed Limit", 0, 70, 30, step=5)
+            speed_limit = st.slider(" Speed Limit", 0, 70, 30, step=5)
             
             trafficway_options = FEATURE_MAPPINGS['TRAFFICWAY_TYPE']
-            trafficway = st.selectbox("Trafficway Type", trafficway_options)
+            trafficway = st.selectbox(" Trafficway Type", trafficway_options)
             trafficway_val = trafficway_options.index(trafficway)
             
             alignment_options = FEATURE_MAPPINGS['ALIGNMENT']
-            alignment = st.selectbox("Alignment", alignment_options)
+            alignment = st.selectbox("↔ Alignment", alignment_options)
             alignment_val = alignment_options.index(alignment)
             
             control_options = FEATURE_MAPPINGS['TRAFFIC_CONTROL_DEVICE']
@@ -341,12 +329,12 @@ def main():
             control_val = control_options.index(traffic_control)
         
         # Additional details
-        with st.expander("🔧 Additional Details", expanded=False):
+        with st.expander(" Additional Details", expanded=False):
             col4, col5, col6 = st.columns(3)
             
             with col4:
                 device_options = FEATURE_MAPPINGS['DEVICE_CONDITION']
-                device_cond = st.selectbox(" Device Condition", device_options, index=2)
+                device_cond = st.selectbox("Device Condition", device_options, index=2)
                 device_val = device_options.index(device_cond)
                 
                 crash_type_options = FEATURE_MAPPINGS['FIRST_CRASH_TYPE']
@@ -355,7 +343,7 @@ def main():
             
             with col5:
                 intersection_options = FEATURE_MAPPINGS['INTERSECTION_RELATED_I']
-                intersection = st.selectbox("Intersection Related", intersection_options, index=2)
+                intersection = st.selectbox(" Intersection Related", intersection_options, index=2)
                 intersection_val = intersection_options.index(intersection)
                 
                 damage_options = FEATURE_MAPPINGS['DAMAGE']
@@ -364,7 +352,7 @@ def main():
             
             with col6:
                 prim_cause_options = FEATURE_MAPPINGS['PRIM_CONTRIBUTORY_CAUSE']
-                prim_cause = st.selectbox("Primary Cause", prim_cause_options, index=1)
+                prim_cause = st.selectbox(" Primary Cause", prim_cause_options, index=1)
                 prim_cause_val = prim_cause_options.index(prim_cause)
                 
                 sec_cause_options = FEATURE_MAPPINGS['SEC_CONTRIBUTORY_CAUSE']
@@ -377,12 +365,11 @@ def main():
             report_type = st.selectbox(" Report Type", report_options, index=1)
             report_val = report_options.index(report_type)
         
-        # ==================== PREDICT BUTTON ====================
+        # Predict button
         st.markdown("---")
         
         if st.button(" PREDICT CRASH OUTCOME", use_container_width=True):
             
-            # Build input DataFrame matching the feature order from training
             input_dict = {
                 'POSTED_SPEED_LIMIT': speed_limit,
                 'TRAFFIC_CONTROL_DEVICE': control_val,
@@ -406,15 +393,12 @@ def main():
                 'CRASH_TIME_OF_DAY': crash_time_val
             }
             
-            # Create DataFrame
             input_df = pd.DataFrame([input_dict])
             
-            # Predict using the pipeline (handles preprocessing internally!)
             with st.spinner("Analyzing crash conditions..."):
                 prediction = pipeline.predict(input_df)[0]
                 probabilities = pipeline.predict_proba(input_df)[0]
                 
-                # Get class name from label encoder
                 predicted_class = label_encoder.inverse_transform([prediction])[0]
                 confidence = probabilities[prediction] * 100
             
@@ -445,7 +429,7 @@ def main():
             col_r1, col_r2 = st.columns(2)
             
             with col_r1:
-                st.markdown("### Probability Breakdown")
+                st.markdown("###  Probability Breakdown")
                 prob_df = pd.DataFrame({
                     'Outcome': classes,
                     'Probability': probabilities * 100
@@ -479,9 +463,9 @@ def main():
                 if speed_limit >= 40:
                     risk_factors.append(" High speed zone (≥40 mph)")
                 if weather != 'CLEAR':
-                    risk_factors.append(f"Adverse weather: {weather}")
+                    risk_factors.append(f" Adverse weather: {weather}")
                 if 'DARKNESS' in lighting:
-                    risk_factors.append("Low visibility (darkness)")
+                    risk_factors.append(" Low visibility (darkness)")
                 if surface not in ['DRY', 'UNKNOWN']:
                     risk_factors.append(f" Poor surface: {surface}")
                 if prim_cause in ['DRINKING', 'OVERSPEEDING', 'DISTRACTION', 'TEXTING']:
@@ -489,7 +473,7 @@ def main():
                 if num_units >= 3:
                     risk_factors.append(f" Multiple vehicles ({num_units})")
                 if crash_hour >= 22 or crash_hour <= 5:
-                    risk_factors.append(" Late night hours")
+                    risk_factors.append("Late night hours")
                 
                 if risk_factors:
                     for rf in risk_factors:
@@ -497,9 +481,9 @@ def main():
                 else:
                     st.success(" No major risk factors identified")
     
-    # ==================== PAGE: RISK ANALYSIS ====================
+    # Risk Analysis Page
     elif page == " Risk Analysis":
-        st.markdown("## Risk Factor Analysis")
+        st.markdown("##  Risk Factor Analysis")
         
         col1, col2 = st.columns(2)
         
@@ -540,7 +524,7 @@ def main():
         with col_s4:
             st.metric("Distraction", "25%", "involve phone use")
     
-    # ==================== PAGE: ABOUT ====================
+    # About page
     elif page == " About":
         st.markdown("##  About This App")
         
@@ -548,7 +532,7 @@ def main():
         ###  Purpose
         Predict whether a traffic crash will result in **injury** or be a **non-injury incident**.
         
-        ### Model: LightBGM
+        ###  Model: LightBGM
         - Full sklearn Pipeline with preprocessing
         - Handles missing values and feature scaling
         - Binary classification with probability estimates
@@ -558,12 +542,13 @@ def main():
         
         col1, col2 = st.columns(2)
         with col1:
-            st.metric("Balanced Accuracy", f"{metrics.get('test_balanced_accuracy', 0.82)*100:.1f}%")
+            st.metric("Balanced Accuracy", f"{metrics.get('test_balanced_accuracy', 0.75)*100:.1f}%")
         with col2:
-            st.metric("Macro F1-Score", f"{metrics.get('test_macro_f1', 0.79)*100:.1f}%")
+            st.metric("Macro F1-Score", f"{metrics.get('test_macro_f1', 0.72)*100:.1f}%")
         
-        st.markdown("""  
-        ### Tech Stack
+        st.markdown("""
+        
+        ###  Tech Stack
         - **ML**: scikit-learn Pipeline + LightGBM
         - **UI**: Streamlit + Plotly
         - **Preprocessing**: SimpleImputer + StandardScaler
