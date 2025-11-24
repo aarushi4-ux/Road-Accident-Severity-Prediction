@@ -1,12 +1,3 @@
-"""
-explainability.py
-Generate SHAP global + local explanations, LIME local explanations,
-and an HTML report for the road-accident-severity project.
-
-Place this file in your project root (the folder containing models/ and Dataset/).
-Run with: python explainability.py
-"""
-
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -22,9 +13,6 @@ import shutil
 import os
 from sklearn.model_selection import train_test_split
 
-# -----------------------
-# Paths - use script location as project root (robust across OS)
-# -----------------------
 PROJECT_ROOT = Path(__file__).resolve().parent
 DATA_PATH = Path("/Users/Dell/Desktop/vscode projects/fds/Dataset/data_labeled.csv")
 MODELS_DIR = PROJECT_ROOT / "models"
@@ -32,18 +20,13 @@ REPORTS_DIR = PROJECT_ROOT / "reports"
 EXPLAIN_DIR = REPORTS_DIR / "explainability_outputs"
 EXPLAIN_DIR.mkdir(parents=True, exist_ok=True)
 
-# optional: if you have any pre-generated feature importance image to embed, change path or leave None
 EXISTING_FI_IMAGE = None
-# e.g. on your machine you had /mnt/data/... - but keep None so script is portable:
-# EXISTING_FI_IMAGE = Path(r"C:\path\to\existing_feature_importance.png")
 
 print("PROJECT ROOT:", PROJECT_ROOT)
 print("EXPLAIN_DIR:", EXPLAIN_DIR)
 print()
 
-# -----------------------
 # Load model + data
-# -----------------------
 print("Loading model and data...")
 model_path = MODELS_DIR / "best_pipeline.joblib"
 encoder_path = MODELS_DIR / "label_encoder.joblib"
@@ -74,19 +57,14 @@ X_train, X_test, y_train, y_test = train_test_split(
 feature_names = X.columns.tolist()
 print(f"Loaded data: X_train={X_train.shape}, X_test={X_test.shape}")
 
-# -----------------------
 # SHAP - global (use sample for speed) and local (per-row)
-# -----------------------
 print("\nComputing SHAP values (global - on a sample)...")
-# build explainer (prefer TreeExplainer for tree models)
-# note: model may be a pipeline; choose classifier step if available
 model_for_explainer = model
 try:
     clf = model.named_steps.get("clf", None)
     if clf is not None:
         model_for_explainer = clf
 except Exception:
-    # model may not be a pipeline
     model_for_explainer = model
 
 use_kernel = False
@@ -97,7 +75,6 @@ except Exception as e:
     print("TreeExplainer not available/failed:", e)
     use_kernel = True
 
-# create a sample for global computation to avoid long runtime
 sample_size = min(5000, X_test.shape[0])
 X_test_sample = shap.sample(X_test, sample_size, random_state=42)
 
@@ -107,14 +84,11 @@ if use_kernel:
     shap_values_sample = explainer.shap_values(X_test_sample)
     expected_value = explainer.expected_value
 else:
-    # TreeExplainer supports DataFrame input and gives faster results.
     explainer = shap.TreeExplainer(model_for_explainer)
     shap_values_sample = explainer.shap_values(X_test_sample)
     expected_value = explainer.expected_value
 
-# compute mean |shap| per feature (handle multiclass list)
 if isinstance(shap_values_sample, list):
-    # shap_values_sample is list[class] -> arrays (n_samples, n_features)
     abs_mean_per_feature = np.mean([np.mean(np.abs(sv), axis=0) for sv in shap_values_sample], axis=0)
 else:
     abs_mean_per_feature = np.mean(np.abs(shap_values_sample), axis=0)
@@ -132,7 +106,7 @@ top20.to_csv(EXPLAIN_DIR / "shap_top20_percent.csv", index=False)
 top20.to_json(EXPLAIN_DIR / "shap_top20_percent.json", orient="records")
 print("Saved top20 CSV/JSON.")
 
-# Save a bar plot
+#bar plot
 plt.figure(figsize=(12,8))
 plt.barh(top20['feature'][::-1], top20['mean_abs_shap'][::-1])
 plt.xlabel('mean |SHAP value|')
@@ -145,9 +119,7 @@ print("Saved shap_top20_bar.png")
 if EXISTING_FI_IMAGE and Path(EXISTING_FI_IMAGE).exists():
     shutil.copy(EXISTING_FI_IMAGE, EXPLAIN_DIR / "existing_feature_importance.png")
 
-# -----------------------
 # Preventive measures (map top features to suggestions)
-# -----------------------
 preventive_measures = {
     "FIRST_CRASH_TYPE": "Target high-risk collision types with engineering (roundabouts, protected turns), education and enforcement.",
     "LOCATION_CLUSTER": "Install engineering countermeasures (speed cushions, signage), hotspot redesigns and increased enforcement.",
@@ -165,21 +137,18 @@ preventive_measures = {
 }
 top20['preventive_measure'] = top20['feature'].apply(lambda f: preventive_measures.get(f, preventive_measures['DEFAULT']))
 
-# -----------------------
-# Local explanations for a few examples: compute per-row (no indexing mismatch)
-# -----------------------
+# Local explanations 
 print("\nPreparing local explanations (SHAP force + LIME) for example rows...")
 
-# choose positional indices (must be < len(X_test))
 example_positions = [10, 100, 250]
 example_positions = [p for p in example_positions if p < len(X_test)]
 if len(example_positions) == 0:
-    example_positions = [0]  # fallback to first row
+    example_positions = [0]  
 
 shap_html_paths = []
 lime_html_paths = []
 
-# prepare LIME explainer once
+# LIME explainer once
 lime_explainer = LimeTabularExplainer(
     training_data=np.array(X_train),
     feature_names=feature_names,
@@ -189,24 +158,20 @@ lime_explainer = LimeTabularExplainer(
 )
 
 for pos in example_positions:
-    row_df = X_test.iloc[[pos]]  # keep as DataFrame for shap
-    row_array = X_test.iloc[pos].values  # 1d array for LIME
+    row_df = X_test.iloc[[pos]]  
+    row_array = X_test.iloc[pos].values  
 
-    # predict class for this row (use pipeline)
     try:
         pred_proba = model.predict_proba(row_df)[0]
         pred_class_idx = int(np.argmax(pred_proba))
     except Exception:
-        # fallback: try model_for_explainer if pipeline mismatch
         pred_proba = model_for_explainer.predict_proba(row_df)[0]
         pred_class_idx = int(np.argmax(pred_proba))
 
-    # SHAP local explanation: compute shap values for this single row using explainer
+    # SHAP local explanation
     try:
         local_shap_vals = explainer.shap_values(row_df)
-        # local_shap_vals format: either list of arrays (n_classes) or array
         if isinstance(local_shap_vals, list):
-            # choose shap array for predicted class
             shap_for_pred = local_shap_vals[pred_class_idx][0]  # row 0
             expected_val_local = explainer.expected_value[pred_class_idx] if isinstance(explainer.expected_value, (list, tuple, np.ndarray)) else explainer.expected_value
         else:
@@ -214,7 +179,6 @@ for pos in example_positions:
             expected_val_local = explainer.expected_value
     except Exception as e:
         print(f"Warning: per-row shap_values failed for pos {pos} with error: {e}")
-        # as fallback compute shap on a small sample that includes the row
         small_sample = pd.concat([row_df, X_test_sample.head(20)], ignore_index=True)
         local_shap_vals = explainer.shap_values(small_sample)
         if isinstance(local_shap_vals, list):
@@ -224,9 +188,8 @@ for pos in example_positions:
             shap_for_pred = local_shap_vals[0]
             expected_val_local = explainer.expected_value
 
-    # Create SHAP force plot (html)
+    #SHAP force plot (html)
     try:
-        # shap.force_plot wants expected_value and shap values vector
         fp = shap.force_plot(expected_val_local, shap_for_pred, row_df, matplotlib=False)
         html_path = EXPLAIN_DIR / f"shap_force_sample_{pos}.html"
         shap.save_html(str(html_path), fp)
@@ -249,9 +212,7 @@ for pos in example_positions:
     except Exception as e:
         print(f"Could not create LIME explanation for pos {pos}: {e}")
 
-# -----------------------
-# Build central HTML report
-# -----------------------
+# HTML report
 print("\nWriting central HTML report...")
 
 def img_to_base64(img_path: Path) -> str:
